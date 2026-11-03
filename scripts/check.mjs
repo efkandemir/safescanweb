@@ -1,11 +1,42 @@
 import fs from "node:fs";
 import path from "node:path";
 import assert from "node:assert/strict";
+import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../dist/", import.meta.url));
 const htmlFiles = fs.readdirSync(root).filter((name) => name.endsWith(".html"));
 const js = fs.readFileSync(path.join(root, "assets/app.js"), "utf8");
-const copy = JSON.parse(js.match(/const copy = (\{[^\r\n]*\});/)[1]);
+
+function readObjectLiteral(source, declaration) {
+  const declarationStart = source.indexOf(declaration);
+  assert.notEqual(declarationStart, -1, `Missing ${declaration}`);
+  const objectStart = source.indexOf("{", declarationStart);
+  assert.notEqual(objectStart, -1, `Missing object literal for ${declaration}`);
+
+  let depth = 0;
+  let quote = "";
+  let escaped = false;
+  for (let index = objectStart; index < source.length; index++) {
+    const character = source[index];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === quote) quote = "";
+      continue;
+    }
+    if (character === '"' || character === "'" || character === "`") {
+      quote = character;
+      continue;
+    }
+    if (character === "{") depth++;
+    if (character === "}" && --depth === 0) {
+      return vm.runInNewContext(`(${source.slice(objectStart, index + 1)})`, Object.create(null), { timeout: 1000 });
+    }
+  }
+  assert.fail(`Unclosed object literal for ${declaration}`);
+}
+
+const copy = readObjectLiteral(js, "const copy =");
 let refs = 0, strings = 0;
 for (const name of htmlFiles) {
   const filename = path.join(root, name), html = fs.readFileSync(filename, "utf8");
