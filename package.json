@@ -1,0 +1,14 @@
+{
+  "name": "safescan-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SafeScan promotional, support and privacy website",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
