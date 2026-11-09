@@ -7,3 +7,15 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
 
 @media(max-width:760px){.hero-visual .floating-note{top:40px;bottom:auto;right:-8px}.faq-section h2 em{margin-left:0}}
+
+.tool-art {
+  display: grid;
+  place-content: center;
+  gap: .75rem;
+  text-align: center;
+  min-height: clamp(12rem, 32vw, 25rem);
+  padding: 1.5rem;
+  color: #182743;
+}
+.tool-art strong { font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1; }
+.tool-art span { font-size: clamp(1rem, 2vw, 1.5rem); }
