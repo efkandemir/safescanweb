@@ -516,7 +516,8 @@
     let anyAvailable = false;
     document.querySelectorAll("[data-store]").forEach((element) => {
       const isIos = element.dataset.store === "ios";
-      const raw = isIos ? config.appStoreUrl : config.googlePlayUrl;
+      const configuredUrl = isIos ? config.appStoreUrl : config.googlePlayUrl;
+      const raw = configuredUrl || element.getAttribute("href");
       let valid = false;
       try {
         const url = new URL(raw);
