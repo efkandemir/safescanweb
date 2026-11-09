@@ -51,7 +51,8 @@ for (const name of htmlFiles) {
   for (const [, ref] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     if (/^(https?:|mailto:|data:)/.test(ref)) continue;
     const [part, hash] = ref.split("#");
-    const resolved = part ? path.resolve(path.dirname(filename), part) : filename;
+    const pathname = part.split("?")[0];
+    const resolved = pathname ? path.resolve(path.dirname(filename), pathname) : filename;
     assert.ok(resolved.startsWith(root), `Path leaves published folder: ${ref}`);
     assert.ok(fs.existsSync(resolved), `${name}: missing ${ref}`);
     if (hash) assert.ok(fs.readFileSync(resolved, "utf8").includes(`id="${hash}"`), `${name}: missing anchor ${ref}`);
